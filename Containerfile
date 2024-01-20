@@ -1,7 +1,7 @@
 FROM alpine:latest as trust-anchor
 
 RUN apk --no-cache add curl gawk grep \
-    && curl -sSL https://data.iana.org/root-anchors/root-anchors.xml | gawk -F'[<>]' '/KeyTag/  { printf "trust-anchor=.,%s", $3 ; next } /Algorithm/ { printf ",%s", $3 ; next } /DigestType/ { printf ",%s", $3 ; next } /Digest/ { printf ",%s\n", $3 ; next } ' | grep ^trust-anchor > /trust-anchors.conf 
+    && curl -sSL https://data.iana.org/root-anchors/root-anchors.xml | gawk -F'[<>]' '/KeyTag/  { printf "trust-anchor=.,%s", $3 ; next } /Algorithm/ { printf ",%s", $3 ; next } /DigestType/ { printf ",%s", $3 ; next } /Digest/ { printf ",%s\n", $3 ; next } ' | grep ^trust-anchor | tail -n1  > /trust-anchors.conf 
 
 FROM alpine:latest
 
