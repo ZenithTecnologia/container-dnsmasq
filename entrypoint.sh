@@ -16,6 +16,7 @@ if [ "${DHCP}" = true ] ; then
     if [ -z ${DNSMASQ_DHCP_NETMASK_RANGE+x} ]; then echo "DNSMASQ_DHCP_NETMASK_RANGE is not set. Exiting"; exit 1 ; fi
     if [ -z ${DNSMASQ_DHCP_GATEWAY+x} ]; then echo "DNSMASQ_DHCP_GATEWAY is not set. Exiting"; exit 1 ; fi
     if [ -z ${DNSMASQ_DHCP_DNS+x} ]; then echo "DNSMASQ_DHCP_DNS is not set. Exiting"; exit 1 ; fi
+    DNSMASQ_DHCP_HOSTSFILE="dhcp-hostsfile=/var/lib/misc/dhcp-hostsfile"
     DNSMASQ_DHCP_RANGE="dhcp-range=${DNSMASQ_DHCP_START_RANGE},${DNSMASQ_DHCP_END_RANGE},${DNSMASQ_DHCP_NETMASK_RANGE},${DNSMASQ_DHCP_LEASE_TIME:-12h}"
     DNSMASQ_DHCP_ROUTER="dhcp-option=option:router,${DNSMASQ_DHCP_GATEWAY}"
     DNSMASQ_DHCP_DNS_OPTION="dhcp-option=6,${DNSMASQ_DHCP_DNS}"
@@ -30,6 +31,8 @@ if [ "${DHCP}" = true ] ; then
         DNSMASQ_AUTHORITATIVE_OPTION="dhcp-authoritative"
     fi
 fi
+
+touch /var/lib/misc/dhcp-hostsfile
 
 cat <<EOF >/etc/dnsmasq-base.conf
 ${DNSMASQ_DNSSEC:-}
@@ -52,6 +55,7 @@ no-negcache
 rebind-domain-ok=${DNS_LOCAL_DOMAIN:-local}
 ${DNSMASQ_DHCP_RANGE:-}
 ${DNSMASQ_DHCP_ROUTER:-}
+${DNSMASQ_DHCP_HOSTSFILE:-}
 ${DNSMASQ_DHCP_DNS_OPTION:-}
 ${DNSMASQ_DHCP_NTP_OPTION:-}
 ${DNSMASQ_DHCP_WPAD_OPTION:-}
