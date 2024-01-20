@@ -2,7 +2,15 @@
 
 set -e
 
-if [ ! "${DNSMASQ_USE_RESOLV}" = true ]; then DNSMASQ_USE_RESOLV_OPTION="no-resolv"; DNSMASQ_USE_POLL_OPTION="no-poll"; fi
+if [ ! "${DNSMASQ_USE_RESOLV}" = true ]; then 
+    DNSMASQ_USE_RESOLV_OPTION="no-resolv"; DNSMASQ_USE_POLL_OPTION="no-poll"
+    DNS_FORWARD_SERVER_OPTION="server=${DNS_FORWARD_SERVER:-8.8.8.8}"
+else
+    if [ -z ${DNS_FORWARD_SERVER+x} ]; then
+	    DNS_FORWARD_SERVER_OPTION="server=${DNS_FORWARD_SERVER}"
+    fi
+fi
+
 
 if [ "${DNSSEC}" = true ] ; then
     DNSMASQ_DNSSEC="dnssec"
@@ -41,7 +49,7 @@ ${DNSMASQ_DNSSEC:-}
 ${DNSMASQ_DNSSEC_CHECK_UNSIGNED_OPTION:-}
 ${DNSMASQ_DNSSEC_TRUST:-}
 port=${DNS_PORT:-53}
-server=${DNS_FORWARD_SERVER:-8.8.8.8}
+${DNS_FORWARD_SERVER_OPTION:-}
 domain=${DNS_LOCAL_DOMAIN:-local}
 domain-needed
 bogus-priv
