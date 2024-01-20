@@ -6,7 +6,7 @@ if [ ! "${DNSMASQ_USE_RESOLV}" = true ]; then
     DNSMASQ_USE_RESOLV_OPTION="no-resolv"; DNSMASQ_USE_POLL_OPTION="no-poll"
     DNS_FORWARD_SERVER_OPTION="server=${DNS_FORWARD_SERVER:-8.8.8.8}"
 else
-    if [ -z ${DNS_FORWARD_SERVER+x} ]; then
+    if [ ! -z ${DNS_FORWARD_SERVER+x} ]; then
 	    DNS_FORWARD_SERVER_OPTION="server=${DNS_FORWARD_SERVER}"
     fi
 fi
