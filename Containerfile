@@ -18,4 +18,5 @@ COPY --chown=root:root --chmod=0755 ./entrypoint.sh /entrypoint.sh
 EXPOSE 53/tcp 53/udp 67/tcp 67/udp
 
 VOLUME /etc/dnsmasq.d/
+VOLUME /var/lib/misc/
 ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]
