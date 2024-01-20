@@ -14,7 +14,7 @@ if [ "${DHCP}" = true ] ; then
     if [ -z ${DNSMASQ_DHCP_NETMASK_RANGE+x} ]; then echo "DNSMASQ_DHCP_NETMASK_RANGE is not set. Exiting"; exit 1 ; fi
     if [ -z ${DNSMASQ_DHCP_GATEWAY+x} ]; then echo "DNSMASQ_DHCP_GATEWAY is not set. Exiting"; exit 1 ; fi
     DNSMASQ_DHCP_RANGE="dhcp-range=${DNSMASQ_DHCP_START_RANGE},${DNSMASQ_DHCP_END_RANGE},${DNSMASQ_DHCP_NETMASK_RANGE},${DNSMASQ_DHCP_LEASE_TIME:-12h}"
-    DNSMASQ_DHCP_ROUTER="dhcp-option=option:router,${DNSMASQ_DHCP_GATEWAY+x}"
+    DNSMASQ_DHCP_ROUTER="dhcp-option=option:router,${DNSMASQ_DHCP_GATEWAY}"
     if [ ! -z ${DNSMASQ_DHCP_NTP+x} ]; then DNSMASQ_DHCP_NTP_OPTION="dhcp-option=option:ntp-server,${DNSMASQ_DHCP_NTP}" ; fi
     if [ ! -z ${DNSMASQ_DHCP_WPAD+x} ]; then DNSMASQ_DHCP_WPAD_OPTION="dhcp-option=option:252,${DNSMASQ_DHCP_WPAD}" ; else DNSMASQ_DHCP_WPAD_OPTION="dhcp-option=option:252,\"\n\"" ; fi
     DNSMASQ_DHCP_MS_RELEASE='dhcp-option=vendor:MSFT,2,1i'
