@@ -4,7 +4,7 @@ set -e
 
 if [ "${DNSSEC}" = true ] ; then
     DNSMASQ_DNSSEC="dnssec"
-    DNSMASQ_DNSSEC_UNSIGNED="dnssec-check-unsigned"
+    if [ "${DNSMASQ_DNSSEC_CHECK_UNSIGNED}" = true ]; then DNSMASQ_DNSSEC_CHECK_UNSIGNED_OPTION="dnssec-check-unsigned"; fi
     DNSMASQ_DNSSEC_TRUST="conf-file=/etc/dnsmasq-trust-anchors.conf"
 fi
 
@@ -29,7 +29,7 @@ fi
 
 cat <<EOF >/etc/dnsmasq-base.conf
 ${DNSMASQ_DNSSEC:-}
-${DNSMASQ_DNSSEC_UNSIGNED:-}
+${DNSMASQ_DNSSEC_CHECK_UNSIGNED_OPTION:-}
 ${DNSMASQ_DNSSEC_TRUST:-}
 port=${DNS_PORT:-53}
 server=${DNS_FORWARD_SERVER:-8.8.8.8}
