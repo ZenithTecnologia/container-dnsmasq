@@ -1,0 +1,78 @@
+name: Release
+on:
+  push:
+    paths:
+      - .github/workflows/build.yml
+      - Containerfile
+    branches:
+      - main
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build and push to registry
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install qemu dependency
+        uses: docker/setup-qemu-action@v3
+
+      - name: Clone the repository
+        uses: actions/checkout@v3
+
+      - name: Tar as root
+        run: |
+          sudo mv -fv /usr/bin/tar /usr/bin/tar.orig
+          echo -e '#!/bin/sh\n\nsudo /usr/bin/tar.orig "$@"' | sudo tee -a /usr/bin/tar
+          sudo chmod +x /usr/bin/tar
+
+      - name: Enable caching for podman
+        id: cache-podman
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.local/share/containers
+          key: ${{ runner.os }}-${{ runner.arch }}
+
+      - name: Podman Socket
+        run: |
+          podman system service  --time=0 unix:///tmp/podman.sock &
+
+      - name: Fetch trivy
+        run: |
+          podman pull docker.io/aquasec/trivy:latest
+
+      - name: Log in to Quay
+        uses: redhat-actions/podman-login@v1
+        with:
+          registry: "quay.io"
+          username: ${{ secrets.ZENITH_QUAY_USER }}
+          password: ${{ secrets.ZENITH_QUAY_TOKEN }}
+
+      - name: Build container - origin branch latest release
+        id: build-stage
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: container-dnsmasq
+          tags: latest
+          layers: true
+          platforms: linux/amd64, linux/arm/v6, linux/arm/v7, linux/arm64/v8
+          containerfiles: |
+            ./Containerfile
+
+      - name: Push to Quay - origin branch latest release
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ steps.build-stage.outputs.image }}
+          tags: ${{ steps.build-stage.outputs.tags }}
+          registry: quay.io/zenithtecnologia
+
+      - name: Run Trivy vulnerability scanner - origin branch latest release
+        run: |
+          podman run --privileged -v /tmp/podman.sock:/var/run/docker.sock -v ./:/data docker.io/aquasec/trivy:latest image --quiet --format sarif --output /data/container.sarif --severity CRITICAL,HIGH --vuln-type os,library --ignore-unfixed ${{ steps.build-stage.outputs.image }}
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'container.sarif'
