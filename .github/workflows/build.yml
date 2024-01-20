@@ -2,6 +2,7 @@ name: Release
 on:
   push:
     paths:
+      - entrypoint.sh
       - .github/workflows/build.yml
       - Containerfile
     branches:
