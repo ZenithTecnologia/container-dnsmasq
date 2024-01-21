@@ -4,6 +4,11 @@ set -e
 
 if [ ! "${DNSMASQ_USE_RESOLV}" = true ]; then 
     DNSMASQ_USE_RESOLV_OPTION="no-resolv"; DNSMASQ_USE_POLL_OPTION="no-poll"
+    for dnsserver in ${DNS_FORWARD_SERVER//,/ }; do
+	    DNSMASQ_USE_RESOLV_OPTION=${dnsserver}
+	    DNSMASQ_USE_RESOLV_OPTION="${DNSMASQ_USE_RESOLV_OPTION}
+	    ${dnsserver}"
+    done
     DNS_FORWARD_SERVER_OPTION="server=${DNS_FORWARD_SERVER:-8.8.8.8}"
 else
     if [ ! -z ${DNS_FORWARD_SERVER+x} ]; then
@@ -50,6 +55,8 @@ ${DNSMASQ_DNSSEC_CHECK_UNSIGNED_OPTION:-}
 ${DNSMASQ_DNSSEC_TRUST:-}
 port=${DNS_PORT:-53}
 ${DNS_FORWARD_SERVER_OPTION:-}
+all-servers
+dns-loop-detect
 domain=${DNS_LOCAL_DOMAIN:-local}
 domain-needed
 bogus-priv
