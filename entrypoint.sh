@@ -9,18 +9,26 @@ if [ ! "${DNSMASQ_USE_RESOLV}" = true ]; then
         DNS_FORWARD_SERVER_OPTION="server=8.8.8.8"
     else
     dnsserver_first_loop=1
+        # $'\n' is a bashism
         for dnsserver in ${DNS_FORWARD_SERVER//,/ }; do
             (( ${dnsserver_first_loop} )) &&	
             DNS_FORWARD_SERVER_OPTION="server=${dnsserver}" ||
-            DNS_FORWARD_SERVER_OPTION="${DNS_FORWARD_SERVER_OPTION}
-server=${dnsserver}"
+            DNS_FORWARD_SERVER_OPTION="${DNS_FORWARD_SERVER_OPTION}"$'\n'"server=${dnsserver}"
             unset dnsserver_first_loop
         done
         unset dnsserver
     fi
 else
     if [ ! -z ${DNS_FORWARD_SERVER+x} ]; then
-	    DNS_FORWARD_SERVER_OPTION="server=${DNS_FORWARD_SERVER}"
+        dnsserver_first_loop=1
+        # $'\n' is a bashism
+        for dnsserver in ${DNS_FORWARD_SERVER//,/ }; do
+            (( ${dnsserver_first_loop} )) &&	
+            DNS_FORWARD_SERVER_OPTION="server=${dnsserver}" ||
+            DNS_FORWARD_SERVER_OPTION="${DNS_FORWARD_SERVER_OPTION}"$'\n'"server=${dnsserver}"
+            unset dnsserver_first_loop
+        done
+        unset dnsserver
     fi
 fi
 
@@ -57,7 +65,7 @@ fi
 
 touch /var/lib/misc/dhcp-hostsfile
 
-cat <<EOF >/etc/dnsmasq-base.conf
+cat <<EOF | grep -v ^$ > /etc/dnsmasq-base.conf
 ${DNSMASQ_DNSSEC:-}
 ${DNSMASQ_DNSSEC_CHECK_UNSIGNED_OPTION:-}
 ${DNSMASQ_DNSSEC_TRUST:-}
@@ -90,7 +98,6 @@ ${DNSMASQ_DHCP_MS_RELEASE:-}
 ${DNSMASQ_MAX_LEASE_OPTION:-}
 ${DNSMASQ_RAPID_COMMIT_OPTION:-}
 ${DNSMASQ_AUTHORITATIVE_OPTION:-}
-
 EOF
 
 exec -c /usr/sbin/dnsmasq -k
