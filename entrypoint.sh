@@ -66,13 +66,13 @@ fi
 touch /var/lib/misc/dhcp-hostsfile
 
 cat <<EOF | grep -v ^$ > /etc/dnsmasq-base.conf
+keep-in-foreground
 ${DNSMASQ_DNSSEC:-}
 ${DNSMASQ_DNSSEC_CHECK_UNSIGNED_OPTION:-}
 ${DNSMASQ_DNSSEC_TRUST:-}
 port=${DNS_PORT:-53}
 ${DNS_FORWARD_SERVER_OPTION:-}
 all-servers
-dns-loop-detect
 domain=${DNS_LOCAL_DOMAIN:-local}
 domain-needed
 bogus-priv
@@ -84,7 +84,9 @@ dhcp-leasefile=/var/lib/misc/dnsmasq.leases
 dhcp-name-match=set:wpad-ignore,wpad
 dhcp-ignore-names=tag:wpad-ignore
 stop-dns-rebind
+no-round-robin
 no-negcache
+no-ident
 rebind-domain-ok=${DNS_LOCAL_DOMAIN:-local}
 ${DNSMASQ_DHCP_RANGE:-}
 ${DNSMASQ_DHCP_ROUTER:-}
@@ -108,4 +110,4 @@ done
 
 echo "/"
 
-exec -c /usr/sbin/dnsmasq -k
+exec -c /usr/sbin/dnsmasq
