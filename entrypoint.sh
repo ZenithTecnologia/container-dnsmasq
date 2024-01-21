@@ -3,10 +3,11 @@
 set -e
 
 if [ ! "${DNSMASQ_USE_RESOLV}" = true ]; then 
-    DNSMASQ_USE_RESOLV_OPTION="no-resolv"; DNSMASQ_USE_POLL_OPTION="no-poll"
+    DNSMASQ_USE_RESOLV_OPTION="no-resolv"
+    DNSMASQ_USE_POLL_OPTION="no-poll"
     for dnsserver in ${DNS_FORWARD_SERVER//,/ }; do
-	    DNSMASQ_USE_RESOLV_OPTION=server=${dnsserver}
-	    DNSMASQ_USE_RESOLV_OPTION="${DNSMASQ_USE_RESOLV_OPTION}
+        DNS_FORWARD_SERVER_OPTION="server=${dnsserver}"
+        DNS_FORWARD_SERVER_OPTION="${DNSMASQ_USE_RESOLV_OPTION}
 server=${dnsserver}"
     done
     DNS_FORWARD_SERVER_OPTION="server=${DNS_FORWARD_SERVER:-8.8.8.8}"
