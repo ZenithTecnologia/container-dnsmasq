@@ -7,7 +7,7 @@ FROM alpine:latest
 
 # Why bash, not sh? sh exec exits on signals like HUP and TERM. bash does not.
 
-RUN apk --no-cache add bash catatonit dnsmasq-dnssec \
+RUN apk --no-cache add bash catatonit dnsmasq-dnssec iproute2-minimal jq \
     && echo -en 'conf-file=/etc/dnsmasq-base.conf\nconf-dir=/etc/dnsmasq.d,*.conf' > /etc/dnsmasq.conf
 
 COPY --from=trust-anchor --chmod=0644 /trust-anchors.conf /etc/dnsmasq-trust-anchors.conf
