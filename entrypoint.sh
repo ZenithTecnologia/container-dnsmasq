@@ -100,12 +100,12 @@ ${DNSMASQ_RAPID_COMMIT_OPTION:-}
 ${DNSMASQ_AUTHORITATIVE_OPTION:-}
 EOF
 
-echo -n "container-dnsmasq ip adddresses: "
+echo -n "container-dnsmasq ip adddresses: /"
 
 for ip in $(ip -json addr list dev $(ip -json route list default | jq -r .[].dev) | jq -r .[].addr_info[].local); do
     echo -n "/ ${ip} /"
 done
 
-echo ""
+echo "/"
 
 exec -c /usr/sbin/dnsmasq -k
