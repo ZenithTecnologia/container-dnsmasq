@@ -5,16 +5,19 @@ set -e
 if [ ! "${DNSMASQ_USE_RESOLV}" = true ]; then 
     DNSMASQ_USE_RESOLV_OPTION="no-resolv"
     DNSMASQ_USE_POLL_OPTION="no-poll"
+    if [ -z ${DNS_FORWARD_SERVER+x} ]; then
+        DNS_FORWARD_SERVER_OPTION="server=8.8.8.8"
+    else
     dnsserver_first_loop=1
-    for dnsserver in ${DNS_FORWARD_SERVER//,/ }; do
-        (( ${dnsserver_first_loop} )) &&	
-        DNS_FORWARD_SERVER_OPTION="server=${dnsserver}" ||
-        DNS_FORWARD_SERVER_OPTION="${DNS_FORWARD_SERVER_OPTION}
+        for dnsserver in ${DNS_FORWARD_SERVER//,/ }; do
+            (( ${dnsserver_first_loop} )) &&	
+            DNS_FORWARD_SERVER_OPTION="server=${dnsserver}" ||
+            DNS_FORWARD_SERVER_OPTION="${DNS_FORWARD_SERVER_OPTION}
 server=${dnsserver}"
-        unset dnsserver_first_loop
-    done
-    unset dnsserver
-    DNS_FORWARD_SERVER_OPTION="server=${DNS_FORWARD_SERVER:-8.8.8.8}"
+            unset dnsserver_first_loop
+        done
+        unset dnsserver
+    fi
 else
     if [ ! -z ${DNS_FORWARD_SERVER+x} ]; then
 	    DNS_FORWARD_SERVER_OPTION="server=${DNS_FORWARD_SERVER}"
