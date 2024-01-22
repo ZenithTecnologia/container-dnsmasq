@@ -87,6 +87,10 @@ stop-dns-rebind
 no-round-robin
 no-negcache
 no-ident
+dhcp-fqdn
+dhcp-client-update
+strip-mac
+strip-subnet
 rebind-domain-ok=${DNS_LOCAL_DOMAIN:-local}
 ${DNSMASQ_DHCP_RANGE:-}
 ${DNSMASQ_DHCP_ROUTER:-}
