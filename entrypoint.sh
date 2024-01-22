@@ -91,7 +91,7 @@ dhcp-fqdn
 dhcp-client-update
 strip-mac
 strip-subnet
-rebind-domain-ok=${DNS_LOCAL_DOMAIN:-local}
+rebind-domain-ok=${DNS_LOCAL_DOMAIN:-local}/dns.msftncsi.com
 ${DNSMASQ_DHCP_RANGE:-}
 ${DNSMASQ_DHCP_ROUTER:-}
 ${DNSMASQ_DHCP_HOSTSFILE:-}
