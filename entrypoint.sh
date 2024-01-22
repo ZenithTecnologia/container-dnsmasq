@@ -72,6 +72,7 @@ ${DNSMASQ_DNSSEC_CHECK_UNSIGNED_OPTION:-}
 ${DNSMASQ_DNSSEC_TRUST:-}
 port=${DNS_PORT:-53}
 ${DNS_FORWARD_SERVER_OPTION:-}
+cache-size=${DNS_CACHE_SIZE:-500}
 all-servers
 domain=${DNS_LOCAL_DOMAIN:-local}
 domain-needed
