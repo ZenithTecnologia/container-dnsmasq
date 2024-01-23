@@ -115,4 +115,8 @@ done
 
 echo "/"
 
+touch /var/lib/misc/rc.local
+
+source /var/lib/misc/rc.local
+
 exec -c /usr/sbin/dnsmasq
