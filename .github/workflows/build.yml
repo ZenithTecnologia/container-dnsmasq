@@ -20,7 +20,7 @@ jobs:
         uses: docker/setup-qemu-action@v3
 
       - name: Clone the repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Tar as root
         run: |
@@ -30,7 +30,7 @@ jobs:
 
       - name: Enable caching for podman
         id: cache-podman
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.local/share/containers
@@ -69,11 +69,18 @@ jobs:
           tags: ${{ steps.build-stage.outputs.tags }}
           registry: quay.io/zenithtecnologia
 
+      - name: Push to GitHub - origin branch latest release
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ steps.build-stage.outputs.image }}
+          tags: ${{ steps.build-stage.outputs.tags }}
+          registry: ghcr.io/zenithtecnologia
+
       - name: Run Trivy vulnerability scanner - origin branch latest release
         run: |
           podman run --privileged -v /tmp/podman.sock:/var/run/docker.sock -v ./:/data docker.io/aquasec/trivy:latest image --quiet --format sarif --output /data/container.sarif --severity CRITICAL,HIGH --vuln-type os,library --ignore-unfixed ${{ steps.build-stage.outputs.image }}
 
       - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'container.sarif'
