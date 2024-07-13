@@ -51,6 +51,13 @@ jobs:
           username: ${{ secrets.ZENITH_QUAY_USER }}
           password: ${{ secrets.ZENITH_QUAY_TOKEN }}
 
+      - name: Login to GitHub Container Registry
+        uses: redhat-actions/podman-login@v1
+        with:
+          registry: "ghcr.io"
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build container - origin branch latest release
         id: build-stage
         uses: redhat-actions/buildah-build@v2
