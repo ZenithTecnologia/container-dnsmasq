@@ -84,7 +84,7 @@ jobs:
           registry: ghcr.io/zenithtecnologia
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action
+        uses: aquasecurity/trivy-action@latest
         with:
           image-ref: 'docker.io/my-organization/my-app:${{ github.sha }}'
           ignore-unfixed: true
