@@ -83,10 +83,17 @@ jobs:
           tags: ${{ steps.build-stage.outputs.tags }}
           registry: ghcr.io/zenithtecnologia
 
-      - name: Run Trivy vulnerability scanner - origin branch latest release
-        run: |
-          podman run --privileged -v /tmp/podman.sock:/var/run/docker.sock -v ./:/data docker.io/aquasec/trivy:latest image --quiet --format sarif --output /data/container.sarif --severity CRITICAL,HIGH --vuln-type os,library --ignore-unfixed ${{ steps.build-stage.outputs.image }}
-
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action
+        with:
+          image-ref: 'docker.io/my-organization/my-app:${{ github.sha }}'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+          format: 'sarif'
+          output: container.sarif
+          limit-severities-for-sarif: true
+          
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
         with:
