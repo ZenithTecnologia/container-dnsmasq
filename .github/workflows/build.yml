@@ -40,10 +40,6 @@ jobs:
         run: |
           podman system service  --time=0 unix:///tmp/podman.sock &
 
-      - name: Fetch trivy
-        run: |
-          podman pull docker.io/aquasec/trivy:latest
-
       - name: Log in to Quay
         uses: redhat-actions/podman-login@v1
         with:
