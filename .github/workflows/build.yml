@@ -39,6 +39,8 @@ jobs:
       - name: Podman Socket
         run: |
           podman system service  --time=0 unix:///tmp/podman.sock &
+          mkdir -pv /run/user/1001/podman/
+          ln -sv /tmp/podman.sock /run/user/1001/podman/podman.sock
 
       - name: Log in to Quay
         uses: redhat-actions/podman-login@v1
